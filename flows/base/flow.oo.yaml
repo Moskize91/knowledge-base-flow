@@ -1,1 +1,93 @@
-nodes: []
+nodes:
+  - task:
+      ui:
+        default_width: 530
+      icon: ":logos:python:"
+      inputs_def:
+        - handle: file
+          description: Input
+          json_schema:
+            contentMediaType: oomol/var
+            type: string
+            ui:widget: file
+          value: ""
+      outputs_def:
+        - handle: index
+          description: Output
+          json_schema:
+            type: integer
+        - handle: text
+          json_schema:
+            type: string
+        - handle: image_path
+          json_schema:
+            type: string
+            ui:widget: file
+      executor:
+        name: python
+        options:
+          language: python
+          source: "import pymupdf
+
+            import tempfile
+
+
+            from oocana import Context
+
+            from PyPDF2 import PdfReader
+
+
+            def main(inputs: dict, context: Context):
+
+            \  file_path = inputs[\"file\"]
+
+            \  reader = PdfReader(file_path)
+
+            \  document = pymupdf.open(file_path)
+
+            \  pages = reader.pages
+
+            \ \ 
+
+            \  for i, page in enumerate(pages):
+
+            \    image_path: str = \"\"
+
+            \    if i < len(document):
+
+            \      doc_page = document[i]
+
+            \      pix = doc_page.get_pixmap()
+
+            \      temp_file = tempfile.NamedTemporaryFile(
+
+            \        suffix=\".png\",\ 
+
+            \        delete=False,
+
+            \        dir=tempfile.gettempdir(),
+
+            \      )
+
+            \      image_path = temp_file.name
+
+            \      pix.save(image_path)
+
+
+            \    text = page.extract_text(0)
+
+            \    context.output(i, \"index\")
+
+            \    context.output(text, \"text\")
+
+            \    context.output(image_path, \"image_path\")
+
+            \  "
+          spawn: false
+    title: 提取 PDF 每一页信息
+    node_id: +python#1
+    inputs_from:
+      - handle: in
+        value: ""
+      - handle: file
+        value: /oomol-storage/PDF/Ptolemys Almagest.pdf
