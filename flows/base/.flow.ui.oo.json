@@ -1,0 +1,224 @@
+{
+  "nodes": [
+    {
+      "id": "+python#1",
+      "contentWidth": 530,
+      "selected": false,
+      "dragging": false,
+      "position": {
+        "x": 68,
+        "y": -27
+      },
+      "positionAbsolute": {
+        "x": 68,
+        "y": -27
+      },
+      "width": 542,
+      "height": 783
+    },
+    {
+      "id": "+python#2",
+      "contentWidth": 581.62109375,
+      "selected": false,
+      "dragging": false,
+      "position": {
+        "x": 1127,
+        "y": 50
+      },
+      "positionAbsolute": {
+        "x": 1127,
+        "y": 47.000000000000014
+      },
+      "width": 594,
+      "height": 485
+    },
+    {
+      "id": "+python#3",
+      "contentWidth": 413.811767578125,
+      "selected": true,
+      "dragging": false,
+      "position": {
+        "x": 651.9166663520866,
+        "y": -102
+      },
+      "positionAbsolute": {
+        "x": 651.9166663520866,
+        "y": -102
+      },
+      "width": 426,
+      "height": 410
+    },
+    {
+      "id": "string_encoder#1",
+      "contentWidth": 200,
+      "selected": false,
+      "dragging": false,
+      "position": {
+        "x": 1749.7499630947923,
+        "y": -74
+      },
+      "positionAbsolute": {
+        "x": 1749.7499630947923,
+        "y": -72
+      },
+      "width": 212,
+      "height": 124
+    },
+    {
+      "id": "file_writer#1",
+      "contentWidth": 200,
+      "selected": false,
+      "dragging": false,
+      "position": {
+        "x": 1996.5832940108262,
+        "y": -74
+      },
+      "positionAbsolute": {
+        "x": 1996.5832940108262,
+        "y": -75.9153573546146
+      },
+      "width": 212,
+      "height": 183
+    }
+  ],
+  "edges": [
+    {
+      "id": "4f435485-76fa-4d19-b83f-388b417ea58a",
+      "connection": {
+        "from": {
+          "type": "from_node",
+          "source": {
+            "node_id": "+python#3",
+            "output_handle": "image_path"
+          }
+        },
+        "to": {
+          "type": "to_node",
+          "target": {
+            "node_id": "+python#2",
+            "input_handle": "image_path"
+          }
+        }
+      },
+      "gradientColor": [
+        "var(--edge-json)",
+        "var(--edge-json)"
+      ]
+    },
+    {
+      "id": "43548576-fabd-49b8-bf38-8b417ea58a41",
+      "connection": {
+        "from": {
+          "type": "from_node",
+          "source": {
+            "node_id": "+python#1",
+            "output_handle": "text"
+          }
+        },
+        "to": {
+          "type": "to_node",
+          "target": {
+            "node_id": "+python#3",
+            "input_handle": "text"
+          }
+        }
+      },
+      "gradientColor": [
+        "var(--edge-json)",
+        "var(--edge-json)"
+      ]
+    },
+    {
+      "id": "548576fa-bd19-483f-b88b-417ea58a41ce",
+      "connection": {
+        "from": {
+          "type": "from_node",
+          "source": {
+            "node_id": "+python#1",
+            "output_handle": "image_path"
+          }
+        },
+        "to": {
+          "type": "to_node",
+          "target": {
+            "node_id": "+python#3",
+            "input_handle": "image_path"
+          }
+        }
+      },
+      "gradientColor": [
+        "var(--edge-json)",
+        "var(--edge-json)"
+      ]
+    },
+    {
+      "id": "8576fabd-19b8-4f38-8b41-7ea58a41cec1",
+      "connection": {
+        "from": {
+          "type": "from_node",
+          "source": {
+            "node_id": "+python#3",
+            "output_handle": "text"
+          }
+        },
+        "to": {
+          "type": "to_node",
+          "target": {
+            "node_id": "string_encoder#1",
+            "input_handle": "string"
+          }
+        }
+      },
+      "gradientColor": [
+        "var(--edge-json)",
+        "var(--edge-json)"
+      ]
+    },
+    {
+      "id": "76fabd19-b83f-488b-817e-a58a41cec153",
+      "connection": {
+        "from": {
+          "type": "from_node",
+          "source": {
+            "node_id": "+python#2",
+            "output_handle": "text"
+          }
+        },
+        "to": {
+          "type": "to_node",
+          "target": {
+            "node_id": "string_encoder#1",
+            "input_handle": "string"
+          }
+        }
+      },
+      "gradientColor": [
+        "var(--edge-json)",
+        "var(--edge-json)"
+      ]
+    },
+    {
+      "id": "fabd19b8-3f38-4b41-bea5-8a41cec1534b",
+      "connection": {
+        "from": {
+          "type": "from_node",
+          "source": {
+            "node_id": "string_encoder#1",
+            "output_handle": "binary"
+          }
+        },
+        "to": {
+          "type": "to_node",
+          "target": {
+            "node_id": "file_writer#1",
+            "input_handle": "binary"
+          }
+        }
+      },
+      "gradientColor": [
+        "var(--edge-json)",
+        "var(--edge-json)"
+      ]
+    }
+  ]
+}

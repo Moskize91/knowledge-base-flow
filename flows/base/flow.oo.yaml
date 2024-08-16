@@ -47,11 +47,19 @@ nodes:
 
             \  pages = reader.pages
 
+            \  length = len(pages)
+
             \ \ 
 
             \  for i, page in enumerate(pages):
 
             \    image_path: str = \"\"
+
+            \    context.report_progress(
+
+            \      round(float(i) / float(length) * 100.0)
+
+            \    )
 
             \    if i < len(document):
 
@@ -90,4 +98,157 @@ nodes:
       - handle: in
         value: ""
       - handle: file
-        value: /oomol-storage/PDF/Ptolemys Almagest.pdf
+        value: /oomol-storage/PDF/近代几何学分片.pdf
+  - task:
+      ui:
+        default_width: 530
+      icon: ":logos:python:"
+      inputs_def:
+        - handle: image_path
+          description: Input
+          json_schema:
+            type: string
+            ui:widget: file
+          value: ""
+      outputs_def:
+        - handle: text
+          description: Output
+          json_schema:
+            type: string
+      executor:
+        name: python
+        options:
+          language: python
+          source: "import tempfile
+
+            import pytesseract
+
+
+            from PIL import Image
+
+            from oocana import Context
+
+
+            pytesseract.pytesseract.tesseract_cmd =
+            \"/usr/bin/tesseract\"
+
+
+            # https://github.com/madmaze/pytesseract
+
+            #
+            https://github.com/tesseract-ocr/tessdata/blob/main/chi_sim.trained\
+            data
+
+            def main(inputs: dict, context: Context):
+
+            \  file_path = inputs[\"image_path\"]
+
+            \  image = Image.open(file_path)
+
+            \  text = pytesseract.image_to_string(
+
+            \    image,
+
+            \    lang=\"chi_sim\",
+
+            \    config=\"/app/workspace/tessdata\",
+
+            \  )
+
+            \  return { \"text\": text }
+
+            \  "
+          spawn: false
+    title: 识别图片中文字
+    node_id: +python#2
+    inputs_from:
+      - handle: in
+        value: ""
+      - handle: image_path
+        value: /oomol-storage/PDF/pdf_page.png
+        from_node:
+          - node_id: +python#3
+            output_handle: image_path
+  - task:
+      ui:
+        default_width: 530
+      icon: ":logos:python:"
+      inputs_def:
+        - handle: text
+          description: Input
+          json_schema:
+            type: string
+          value: ""
+        - handle: image_path
+          json_schema:
+            type: string
+            ui:widget: file
+      outputs_def:
+        - handle: text
+          description: Output
+          json_schema:
+            type: string
+        - handle: image_path
+          json_schema:
+            type: string
+            ui:widget: file
+      executor:
+        name: python
+        options:
+          language: python
+          source: |-
+            from oocana import Context
+
+            def main(inputs: dict, context: Context):
+              text = inputs["text"].strip()
+              image_path = inputs["image_path"]
+
+              if text != "":
+                return { "text": text }
+
+              if image_path != "":
+                return { "image_path": image_path }
+
+              raise Exception("No text or image")
+          spawn: false
+    title: 是否需要 ORC
+    node_id: +python#3
+    inputs_from:
+      - handle: in
+        value: ""
+      - handle: text
+        from_node:
+          - node_id: +python#1
+            output_handle: text
+      - handle: image_path
+        from_node:
+          - node_id: +python#1
+            output_handle: image_path
+  - task: transform::string_encoder
+    title: "Encode String #1"
+    node_id: string_encoder#1
+    inputs_from:
+      - handle: encode
+        value: utf8
+      - handle: string
+        from_node:
+          - node_id: +python#3
+            output_handle: text
+          - node_id: +python#2
+            output_handle: text
+  - task: file::file_writer
+    title: "Write File #1"
+    node_id: file_writer#1
+    inputs_from:
+      - handle: create_folder_if_need
+        value: true
+      - handle: when_file_exists
+        value: rename
+      - handle: binary
+        from_node:
+          - node_id: string_encoder#1
+            output_handle: binary
+      - handle: output_folder
+        value: /oomol-storage/PDF
+      - handle: file_name
+        value: target_file.txt
